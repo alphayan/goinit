@@ -1,0 +1,2 @@
+# goinit
+init a project
