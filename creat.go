@@ -1,19 +1,30 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path"
 )
 
-func gocreat(dir string) error {
+var echoRouter = `package main
+	func initRouter(){
+	e := echo.New()
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, World!")
+	})
+	e.Logger.Fatal(e.Start(":1323"))
+	}
+`
+
+func gocreat(dir, frame string) error {
 	err := os.MkdirAll(path.Join(GOPATHSRC, dir), 0777)
 	if err != nil {
 		return err
 	}
-	fmt.Println(newMain(dir), newConfig(dir), newDB(dir), newRabbitmq(dir), newRedis(dir), newRouter(dir))
-
+	fmt.Println(newMain(dir), newConfig(dir), newDB(dir), newRabbitmq(dir), newRedis(dir), newRouter(dir, frame))
 	return nil
 }
 
@@ -36,22 +47,30 @@ func newConfig(dir string) error {
 		return err
 	}
 	f.WriteString(`package main
-
+    // Config struct
 	type Config struct{
 	}
 	`)
 	return nil
 }
-func newRouter(dir string) error {
+func newRouter(dir, frame string) error {
 	f, err := os.Create(path.Join(GOPATHSRC, dir, "router.go"))
 	if err != nil {
 		return err
 	}
-	f.WriteString(`package main
+
+	switch frame {
+	case "echo":
+		f.WriteString(echoRouter)
+	default:
+		f.WriteString(`package main
 
 	func initRouter(){
+
 	}
 	`)
+	}
+
 	return nil
 }
 func newDB(dir string) error {
@@ -92,9 +111,22 @@ func newRabbitmq(dir string) error {
 }
 func goinitfmt(dir string) {
 	mycmd := "/d/gopath/src/goinit/fmt.sh" + " " + dir
-	f, err := exec.Command("sh", "-c", mycmd).Output()
+	f := exec.Command("sh", "-c", mycmd)
+	stdout, err := f.StdoutPipe()
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
-	fmt.Println(string(f))
+	f.Start()
+	reader := bufio.NewReader(stdout)
+	//实时循环读取输出流中的一行内容
+	for {
+		line, err2 := reader.ReadString('\n')
+		if err2 != nil || io.EOF == err2 {
+			break
+		}
+		fmt.Print(line)
+	}
+	f.Wait()
+
 }

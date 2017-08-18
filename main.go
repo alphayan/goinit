@@ -14,21 +14,27 @@ func init() {
 }
 
 func main() {
-	fla := flag.NewFlagSet("goinit", 1)
-	fla.Parse([]string{"c", "rm"})
-	args := os.Args
-	c := flag.String("c", "", "gocreat a new project with the specified name")
-	rm := flag.String("rm", "", "remove a project with the specified name")
-	flag.Parse()
+	args := os.Args                    //获取命令行参数
+	fl := flag.NewFlagSet("goinit", 0) //自定义flag
+	c := fl.String("c", "", "creat a new project with the specified name")
+	rm := fl.String("rm", "", "remove a project with the specified name")
+	frame := fl.String("frame", "", `select a web frame from:
+	gin
+	beego
+	echo
+	go-json-rest
+	`)
+	fl.Parse(args[1:]) //需要使用第二个参数之后的切片
 	if *c != "" {
-		fmt.Println(gocreat(*c))
+		fmt.Println(gocreat(*c, *frame))
 		goinitfmt(*c)
 		os.Exit(0)
 	}
 	if *rm != "" {
-		goremove(*rm)
+		fmt.Println(goremove(*rm))
 		os.Exit(0)
 	}
+
 	if len(args) < 2 {
 		fmt.Println("use goinit -h for help")
 		return
