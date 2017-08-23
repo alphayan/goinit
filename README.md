@@ -1,7 +1,7 @@
 # goinit    
 
 
-goinit  create  a   go  project  in  $GOPATH/src/    
+goinit  create  a   go  project  in  `$GOPATH/src/`   
 
 
 ## Start using it
