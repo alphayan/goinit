@@ -11,7 +11,9 @@ Download and install it:
 Create a go project:    
 `$ goinit -c projectname`   
 
-
+## Get help
+Read help dockument:
+`$ goinit -h`
 
 ## Project directory hierarchy
 ``` 
