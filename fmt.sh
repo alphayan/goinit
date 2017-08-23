@@ -1,6 +1,5 @@
 #!/bin/bash
 cd $GOPATH/src/$1
-echo $PWD
 go fmt
 goimports -w -l .|grep -v vendor
 echo n|glide init

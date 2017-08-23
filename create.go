@@ -19,7 +19,7 @@ var echoRouter = `package main
 	}
 `
 
-func gocreat(dir, frame string) error {
+func gocreate(dir, frame string) error {
 	err := os.MkdirAll(path.Join(GOPATHSRC, dir), 0777)
 	if err != nil {
 		return err
@@ -58,7 +58,6 @@ func newRouter(dir, frame string) error {
 	if err != nil {
 		return err
 	}
-
 	switch frame {
 	case "echo":
 		f.WriteString(echoRouter)
