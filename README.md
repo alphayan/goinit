@@ -1,2 +1,9 @@
 # goinit
-init a go project in $GOPATH/src/
+init  a  go  project  in  $GOPATH/src/
+<project>/
+    |- -main.go
+    |- -config.go
+    |- -db.go
+    |- -redis.go
+    |- -rabbitmq.go
+    |- -router.go
