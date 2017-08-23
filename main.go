@@ -27,12 +27,12 @@ func main() {
 	fl.Parse(args[1:]) //需要使用第二个参数之后的切片
 	if *c != "" {
 		fmt.Println(gocreate(*c, *frame))
-		goinitfmt(*c)
-		os.Exit(0)
+		//goinitfmt(*c)
+		return
 	}
 	if *rm != "" {
 		fmt.Println(goremove(*rm))
-		os.Exit(0)
+		return
 	}
 
 	if len(args) < 2 {

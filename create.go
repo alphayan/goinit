@@ -24,7 +24,7 @@ func gocreate(dir, frame string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(newMain(dir), newConfig(dir), newDB(dir), newRabbitmq(dir), newRedis(dir), newRouter(dir, frame))
+	fmt.Println(newMain(dir), newConfig(dir), newDB(dir), newRabbitmq(dir), newRedis(dir), newRouter(dir, frame), newGitgnore(dir))
 	return nil
 }
 
@@ -108,6 +108,44 @@ func newRabbitmq(dir string) error {
 	`)
 	return nil
 }
+
+func newGitgnore(dir string) error {
+	f, err := os.Create(path.Join(GOPATHSRC, dir, ".gitignore"))
+	if err != nil {
+		return err
+	}
+	f.WriteString(`
+	# Binaries for programs and plugins
+	*.exe
+	*.dll
+	*.so
+	*.dylib
+
+	# Test binary, build with 'go test -c'
+	*.test
+
+	# Output of the go coverage tool, specifically when used with LiteIDE
+	*.out
+
+	# Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
+	.glide/
+
+	#jetbrains
+	.idea/
+
+	#.init
+	.init/
+
+	#vendor
+	.vendor/
+
+	#gitignore
+	.gitignore
+
+	`)
+	return nil
+}
+
 func goinitfmt(dir string) {
 	mycmd := "/d/gopath/src/goinit/fmt.sh" + " " + dir
 	f := exec.Command("sh", "-c", mycmd)
