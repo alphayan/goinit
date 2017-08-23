@@ -1,11 +1,18 @@
 # goinit    
 
-goinit  create  a   go  project  in  $GOPATH/src/    
-    
-use  `go get -u -v github.com/alphayan/goinit` 
 
+goinit  create  a   go  project  in  $GOPATH/src/    
+
+
+## Start using it
+
+Download and install it:    
+`$ go get -u -v github.com/alphayan/goinit`
+
+
+## Project directory hierarchy
 ``` 
-project/        
+<project>/       
     |- -main.go     
     |- -config.go       
     |- -db.go       
