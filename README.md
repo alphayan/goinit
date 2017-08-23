@@ -24,4 +24,5 @@ Read help dockument:
     |- -redis.go        
     |- -rabbitmq.go     
     |- -router.go
+    |- -.gitignore
 ```
