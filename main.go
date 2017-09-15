@@ -4,13 +4,14 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path"
 )
 
 // GOPATHSRC gopath/src路径
 var GOPATHSRC string
 
 func init() {
-	GOPATHSRC = os.Getenv("GOPATH") + "/src/"
+	GOPATHSRC = path.Join(os.Getenv("GOPATH"), "/src/")
 }
 
 func main() {

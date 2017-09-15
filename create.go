@@ -60,6 +60,7 @@ func newMain(dir string) error {
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 	f.WriteString(`package main
 
 	func main(){
@@ -73,44 +74,40 @@ func newConfig(dir string) error {
 	if err != nil {
 		return err
 	}
-	f.WriteString(`package main
-    // Config struct
-	type Config struct {
-	DBHost     string
-	DBPort     string
-	DBUsername string
-	DBPassword string
-	DBName     string
+	defer f.Close()
+	f.WriteString(`
+package main
+// Config struct
+type Config struct {` +
+		"\n  DBHost     string `default:\"mysql\"`\n" +
+		"	DBPort     string `default:\"3306\"`\n" +
+		"	DBUsername string `default:\"root\"`\n" +
+		"	DBPassword string `default:\"root\"`\n" +
+		"	DBName     string `default:\"test\"`\n" +
+		"	\n" +
+		"	MQHost     string `default:\"rabbitmq\"`\n" +
+		"	MQUsername string `default:\"guest\"`\n" +
+		"	MQPassword string `default:\"guest\"`\n" +
+		"	MQPort     string `default:\"5672\"`\n" +
+		"	}\n" +
+		`
 
-	RedisHost     string
-	RedisPort     string
-	RedisPassword string
-	RedisDb       int
 
-	MQHost     string
-	MQUsername string
-	MQPassword string
-	MQPort     string
-}
 
 var config Config
 
-// initConfig 初始化配置信息
 func initConfig() {
-	// load .env file for develop env
 	err := godotenv.Overload()
 	if err != nil {
 		log.Infof("Err loading .env file: %+v", err)
 	}
 	// load config
-	m := multiconfig.MultiLoader(
-		&multiconfig.TagLoader{},
-		&multiconfig.EnvironmentLoader{
-			// ErrorMap the verification lib errors
-			CamelCase: true,
-		},
-	)
-	m.Load(&config)
+	m := multiconfig.New()
+	m.MustLoad(&config)
+	l := multiconfig.EnvironmentLoader{
+		CamelCase: true,
+	}
+	l.Load(&config)
 	// log settings
 	if config.Debug {
 		log.SetFormatter(&log.TextFormatter{
@@ -125,7 +122,9 @@ func initConfig() {
 		log.SetLevel(log.InfoLevel)
 	}
 }
+
 	`)
+
 	return nil
 }
 func newRouter(dir, frame string) error {
@@ -133,6 +132,7 @@ func newRouter(dir, frame string) error {
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 	switch frame {
 	case "echo":
 		f.WriteString(echoRouter)
@@ -149,11 +149,13 @@ func newRouter(dir, frame string) error {
 	}
 	return nil
 }
+
 func newDB(dir string) error {
 	f, err := os.Create(path.Join(GOPATHSRC, dir, "db.go"))
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 	f.WriteString(`package main
 
 	func initDB(){
@@ -181,6 +183,7 @@ func newRedis(dir string) error {
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 	f.WriteString(`package main
 
 	func initRedis(){
@@ -208,6 +211,7 @@ func newRabbitmq(dir string) error {
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 	f.WriteString(`package main
 
 	func initRabbitmq(){
@@ -221,6 +225,7 @@ func newGitgnore(dir string) error {
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 	f.WriteString(`
 	# Binaries for programs and plugins
 	*.exe
