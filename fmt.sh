@@ -1,6 +1,5 @@
 #!/bin/bash
 cd $GOPATH/src/$1
-go fmt
 goimports -w -l .|grep -v vendor
 echo n|glide init
 export http_proxy=http://192.168.31.99:8123
