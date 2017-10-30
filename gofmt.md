@@ -1,5 +1,5 @@
-#go语言代码优化第三方库
-###goimport 官方工具，比gofmt多了自动导入包名的功能  
+# go语言代码优化第三方库
+### goimport 官方工具，比gofmt多了自动导入包名的功能  
 安装：
      
 `go get -u -v golang.org/x/tools/cmd/goimports`  
@@ -7,7 +7,7 @@
 用法： 
     
 `goimport -w -l .`
-###gocyclo 用来检查函数的复杂度。   
+### gocyclo 用来检查函数的复杂度。   
 安装  :
 
 `go get -u -v github.com/fzipp/gocyclo
@@ -20,7 +20,7 @@
 
 `gocyclo -top 10 $(ls -d */ | grep -v vendor)
 `
-###interfacer 检查是否可以定义为接口类型   
+### interfacer 检查是否可以定义为接口类型   
 安装：     
        
 `go get -u -v github.com/mvdan/interfacer/cmd/interfacer
@@ -30,7 +30,7 @@
 
 `interfacer  
 `
-###deadcode  检查没有用到的代码   
+### deadcode  检查没有用到的代码   
 安装：
   
 `go get -u -v github.com/tsenart/deadcode
@@ -39,7 +39,7 @@
 用法：
 
 `deadcode`
-###gotype 对go文件和包进行语义(semantic)和句法(syntactic)的分析,这是google提供的一个工具。
+### gotype 对go文件和包进行语义(semantic)和句法(syntactic)的分析,这是google提供的一个工具。
 安装：
 
 `go get -u -v golang.org/x/tools/cmd/gotype
@@ -48,7 +48,7 @@
 用法：
 
 `gotype *.go`
-###misspell 用来拼写检查，对国内英语不太熟练的同学很有帮助。
+### misspell 用来拼写检查，对国内英语不太熟练的同学很有帮助。
 安装：
 
 `go get -u github.com/client9/misspell`
@@ -56,7 +56,7 @@
 用法：
 
 `misspell *.go`
-###go-tools 强大的go工具   
+### go-tools 强大的go工具   
 安装：
 
 `go get -u -v honnef.co/go/tools/...`
@@ -75,7 +75,7 @@ unused|	Reports unused identifiers (types, functions, ...) in your code.(检查�
 megacheck|	Run staticcheck, gosimple and unused in one go(同时运行三个命令)
 
 
-###goconst 会查找重复的字符串，这些字符串可以抽取成常量。
+### goconst 会查找重复的字符串，这些字符串可以抽取成常量。
 安装：
 
 `go get -u -v github.com/jgautheron/goconst/cmd/goconst
