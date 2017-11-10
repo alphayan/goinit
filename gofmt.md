@@ -23,7 +23,7 @@
 ### interfacer 检查是否可以定义为接口类型   
 安装：     
        
-`go get -u -v github.com/mvdan/interfacer/cmd/interfacer
+`go get -u -v github.com/mvdan/interfacer
 `
 
 用法：
