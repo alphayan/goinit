@@ -120,7 +120,8 @@ func initDB() {
 		break
 	}
 	db.LogMode(true)
-}`
+}
+`
 	// XORM ...
 	XORM = `package main
 
@@ -261,7 +262,8 @@ func main() {
 	initDB()
 	initRedis()
 	initRouter()
-}`
+}
+`
 	// REDIS ...
 	REDIS = `package main
 
