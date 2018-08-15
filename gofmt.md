@@ -1,4 +1,14 @@
 # go语言代码优化第三方库
+### 更快的统一检查代码工具（2018.08.15 update）
+`Linters Runner for Go. 5x faster than gometalinter. Nice colored output. Can report only new issues. Fewer false-positives. Yaml/toml config. https://golangci.com`
+
+[https://github.com/golangci/golangci-lint](https://github.com/golangci/golangci-lint)
+### go统一检查代码工具（2018.08.15 update）
+`Concurrently run Go lint tools and normalise their output `
+
+[https://github.com/alecthomas/gometalinter](https://github.com/alecthomas/gometalinter)
+### go语言优化（2018.08.15 update）
+[像牛人一样改进你的go代码](https://colobu.com/2017/06/27/Lint-your-golang-code-like-a-mad-man/)
 ### goimport 官方工具，比gofmt多了自动导入包名的功能  
 安装：
      
@@ -84,3 +94,4 @@ megacheck|	Run staticcheck, gosimple and unused in one go(同时运行三个命�
 用法：
 
 `goconst ./...|grep -v vendor`
+

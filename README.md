@@ -21,8 +21,7 @@ Read help dockument:
     |- -main.go     
     |- -config.go       
     |- -db.go       
-    |- -redis.go        
-    |- -rabbitmq.go     
+    |- -redis.go
     |- -router.go
     |- -.gitignore
 ```
