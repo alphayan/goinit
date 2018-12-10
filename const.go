@@ -219,34 +219,19 @@ func initRouter() {
 }`
 	// GITIGNORE ...
 	GITIGNORE = `# Binaries for programs and plugins
-	*.exe
-	*.dll
-	*.so
-	*.dylib
+*.exe
+*.dll
+*.so
+*.dylib
 
-	# Test binary, build with 'go test -c'
-	*.test
+# Test binary, build with 'go test -c'
+*.test
 
-	# Output of the go coverage tool, specifically when used with LiteIDE
-	*.out
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
 
-	# Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
-	.glide/
-
-	#jetbrains
-	.idea/
-
-	#.init
-	.init/
-
-	#vendor
-	.vendor/
-
-	#gitignore
-	.gitignore
-	
-	#config
-	config.toml
+#jetbrains
+.idea/
 `
 	// MAIN
 	MAIN = `package main
