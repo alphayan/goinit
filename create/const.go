@@ -1,13 +1,14 @@
-package main
+package create
 
 const (
 	// CONFIG ...
 	CONFIG = `package main
 
 import (
-	"github.com/micro/go-config"
-	"github.com/micro/go-config/source/file"
+	"fmt"
+
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 // Config 配置文件结构体
@@ -41,13 +42,16 @@ type Runmode struct {
 var conf = new(Config)
 
 func initConfig() {
-	tc := new(TomlConfig)
-	if err := config.Load(file.NewSource(
-		file.WithPath("config.toml"),
-	)); err != nil {
-		logrus.Fatal(err)
+	viper.SetConfigName("config")         //  设置配置文件名 (不带后缀)
+	viper.AddConfigPath("/etc/appname/")  // 第一个搜索路径
+	viper.AddConfigPath("$HOME/.appname") // 可以多次调用添加路径
+	viper.AddConfigPath(".")              // 比如添加当前目录
+	err := viper.ReadInConfig()           // 搜索路径，并读取配置数据
+	if err != nil {
+		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
-	if err := config.Scan(&tc); err != nil {
+	tc := new(TomlConfig)
+	if err := viper.Unmarshal(tc); err != nil {
 		logrus.Fatal(err)
 	}
 	if tc.Runmode.Runmode == "dev" {

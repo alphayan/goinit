@@ -1,4 +1,4 @@
-package main
+package create
 
 import (
 	"errors"
@@ -7,21 +7,40 @@ import (
 	"path"
 )
 
-// gocreate create a dir in $GOPATH/src/
-func gocreate(dir, frame, db string) error {
+// GOPATHSRC gopath/src路径
+var GOPATHSRC string
+
+func init() {
+	GOPATHSRC = path.Join(os.Getenv("GOPATH"), "/src/")
+}
+
+// isExist check that the directory exists
+func isExist(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil || os.IsExist(err)
+}
+
+// Create create a dir in $GOPATH/src/
+func Create(dir, frame, db string) error {
 	if isExist(path.Join(GOPATHSRC, dir)) {
-		return errors.New("project is already exist,please change the projectname or remove the project")
+		return errors.New("this project is already exist,please change the projectname or remove the project")
 	}
 	err := os.MkdirAll(path.Join(GOPATHSRC, dir), 0777)
 	if err != nil {
 		return err
 	}
-	fmt.Println(newMain(dir, db), newConfig(dir), newDB(dir, db), newRedis(dir), newRouter(dir, frame), newGitignore(dir), newToml(dir))
+	NewMain(dir, db)
+	NewConfig(dir)
+	NewDB(dir, db)
+	NewRedis(dir)
+	NewRouter(dir, frame)
+	NewGitignore(dir)
+	NewToml(dir)
 	return nil
 }
 
-// newMain creat main.go
-func newMain(dir, db string) error {
+// NewMain creat main.go
+func NewMain(dir, db string) error {
 	f, err := os.Create(path.Join(GOPATHSRC, dir, "main.go"))
 	if err != nil {
 		return err
@@ -36,8 +55,8 @@ func newMain(dir, db string) error {
 	return nil
 }
 
-// newRedis create redis.go
-func newRedis(dir string) error {
+// NewRedis create redis.go
+func NewRedis(dir string) error {
 	f, err := os.Create(path.Join(GOPATHSRC, dir, "redis.go"))
 	if err != nil {
 		return err
@@ -47,8 +66,8 @@ func newRedis(dir string) error {
 	return nil
 }
 
-// newGitignore create .gitignore
-func newGitignore(dir string) error {
+// NewGitignore create .gitignore
+func NewGitignore(dir string) error {
 	f, err := os.Create(path.Join(GOPATHSRC, dir, ".gitignore"))
 	if err != nil {
 		return err
@@ -58,14 +77,8 @@ func newGitignore(dir string) error {
 	return nil
 }
 
-// isExist check that the directory exists
-func isExist(path string) bool {
-	_, err := os.Stat(path)
-	return err == nil || os.IsExist(err)
-}
-
-// newConfig create config.go
-func newConfig(dir string) error {
+// NewConfig create config.go
+func NewConfig(dir string) error {
 	f, err := os.Create(path.Join(GOPATHSRC, dir, "config.go"))
 	if err != nil {
 		return err
@@ -75,8 +88,8 @@ func newConfig(dir string) error {
 	return nil
 }
 
-// newDB create db.go
-func newDB(dir, db string) error {
+// NewDB create db.go
+func NewDB(dir, db string) error {
 	f, err := os.Create(path.Join(GOPATHSRC, dir, "db.go"))
 	if err != nil {
 		return err
@@ -93,8 +106,8 @@ func newDB(dir, db string) error {
 	return nil
 }
 
-// newRouter create router.go
-func newRouter(dir, frame string) error {
+// NewRouter create router.go
+func NewRouter(dir, frame string) error {
 	f, err := os.Create(path.Join(GOPATHSRC, dir, "router.go"))
 	if err != nil {
 		return err
@@ -115,8 +128,8 @@ func newRouter(dir, frame string) error {
 	return nil
 }
 
-// newToml create config.toml
-func newToml(dir string) error {
+// NewToml create config.toml
+func NewToml(dir string) error {
 	f, err := os.Create(path.Join(GOPATHSRC, dir, "config.toml"))
 	if err != nil {
 		return err
