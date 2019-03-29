@@ -7,10 +7,14 @@ import (
 	"path"
 )
 
-// GOPATHSRC gopath/src路径
+// GOPATHSRC $GOPATH/src
 var GOPATHSRC string
 
 func init() {
+	if os.Getenv("GOPATH") == "" {
+		GOPATHSRC, _ = os.Getwd()
+		return
+	}
 	GOPATHSRC = path.Join(os.Getenv("GOPATH"), "/src/")
 }
 
