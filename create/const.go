@@ -242,10 +242,14 @@ func initRouter() {
 
 func main() {
 	if %s != nil {
-		defer %s.Close()
+		defer func(){
+			%s.Close()
+		}()
 	}
 	if redisClient != nil {
-		defer redisClient.Close()
+		defer func(){
+			redisClient.Close()
+		}()
 	}
 	initConfig()
 	initDB()
