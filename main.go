@@ -1,7 +1,7 @@
 package main
 
 import (
-	"goinit/cmd"
+	"github.com/alphayan/goinit/cmd"
 )
 
 func main() {
