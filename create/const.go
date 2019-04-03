@@ -17,12 +17,14 @@ type Config struct {
 	RedisPort     string //redis端口
 	RedisPassword string //redis密码
 	RedisDB       int    //redis数据库 0-15
+	Redis         bool   //是否开启redis
 
 	DBHost     string //DB地址
 	DBPort     string //DB端口
 	DBUsername string //DB用户
 	DBPassword string //DB密码
 	DBName     string //DB数据库
+	DB         bool   //是否开启db
 }
 
 // TomlConfig toml的配置文件
@@ -168,7 +170,20 @@ func initRouter() {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(200, "Hello, World!")
 	})
-	e.Logger.Fatal(e.Start(":1323"))
+    go func() {
+		if err := e.Start(":1323"); err != nil {
+			e.Logger.Info("shutting down the server")
+		}
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := e.Shutdown(ctx); err != nil {
+		e.Logger.Fatal(err)
+	}
 }
 `
 	// GIN ...
@@ -237,7 +252,7 @@ func initRouter() {
 #jetbrains
 .idea/
 `
-	// MAIN
+	// MAIN ...
 	MAIN = `package main
 
 func main() {
@@ -252,8 +267,12 @@ func main() {
 		}()
 	}
 	initConfig()
-	initDB()
-	initRedis()
+	if conf.DB {
+		initDB()
+	}
+	if conf.Redis {
+		initRedis()
+	}
 	initRouter()
 }
 `
@@ -316,7 +335,7 @@ func initDB() {
 	}
 }
 `
-	// NETHTTP
+	// NETHTTP ...
 	NETHTTP = `package main
 
 import "net/http"
