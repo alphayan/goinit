@@ -16,8 +16,9 @@ package cmd
 
 import (
 	"fmt"
-	"goinit/create"
 	"os"
+
+	"github.com/alphayan/goinit/create"
 
 	"github.com/spf13/cobra"
 )
