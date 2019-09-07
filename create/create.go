@@ -3,8 +3,10 @@ package create
 import (
 	"errors"
 	"fmt"
+	temp "goinit/template"
 	"os"
 	"path"
+	"text/template"
 )
 
 // GOPATHSRC $GOPATH/src
@@ -50,13 +52,8 @@ func NewMain(dir, db string) error {
 		return err
 	}
 	defer f.Close()
-	switch db {
-	case "xorm":
-		f.WriteString(fmt.Sprintf(MAIN, "engine", "engine"))
-	default:
-		f.WriteString(fmt.Sprintf(MAIN, "db", "db"))
-	}
-	return nil
+	f.WriteString(temp.MAIN)
+	return f.Sync()
 }
 
 // NewRedis create redis.go
@@ -66,8 +63,8 @@ func NewRedis(dir string) error {
 		return err
 	}
 	defer f.Close()
-	f.WriteString(REDIS)
-	return nil
+	f.WriteString(temp.REDIS)
+	return f.Sync()
 }
 
 // NewGitignore create .gitignore
@@ -77,8 +74,8 @@ func NewGitignore(dir string) error {
 		return err
 	}
 	defer f.Close()
-	f.WriteString(GITIGNORE)
-	return nil
+	f.WriteString(temp.GITIGNORE)
+	return f.Sync()
 }
 
 // NewConfig create config.go
@@ -88,8 +85,13 @@ func NewConfig(dir string) error {
 		return err
 	}
 	defer f.Close()
-	f.WriteString(CONFIG)
-	return nil
+	fmt.Println(temp.CONFIG)
+	t, err := template.New("config").Parse(temp.CONFIG)
+	if err != nil {
+		return err
+	}
+	return t.Execute(f, dir)
+
 }
 
 // NewDB create db.go
@@ -101,13 +103,13 @@ func NewDB(dir, db string) error {
 	defer f.Close()
 	switch db {
 	case "gorm":
-		f.WriteString(GORM)
+		f.WriteString(temp.GORM)
 	case "xorm":
-		f.WriteString(XORM)
+		f.WriteString(temp.XORM)
 	default:
-		f.WriteString(DB)
+		f.WriteString(temp.DB)
 	}
-	return nil
+	return f.Sync()
 }
 
 // NewRouter create router.go
@@ -119,17 +121,15 @@ func NewRouter(dir, frame string) error {
 	defer f.Close()
 	switch frame {
 	case "echo":
-		f.WriteString(ECHO)
+		f.WriteString(temp.ECHO)
 	case "gin":
-		f.WriteString(GIN)
-	case "go-json-rest":
-		f.WriteString(GOJSONREST)
+		f.WriteString(temp.GIN)
 	case "iris":
-		f.WriteString(IRIS)
+		f.WriteString(temp.IRIS)
 	default:
-		f.WriteString(NETHTTP)
+		f.WriteString(temp.NETHTTP)
 	}
-	return nil
+	return f.Sync()
 }
 
 // NewToml create config.toml
@@ -139,6 +139,6 @@ func NewToml(dir string) error {
 		return err
 	}
 	defer f.Close()
-	f.WriteString(TOML)
-	return nil
+	f.WriteString(temp.TOML)
+	return f.Sync()
 }
