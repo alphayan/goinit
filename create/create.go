@@ -2,7 +2,6 @@ package create
 
 import (
 	"errors"
-	"fmt"
 	temp "goinit/template"
 	"os"
 	"path"
@@ -85,7 +84,6 @@ func NewConfig(dir string) error {
 		return err
 	}
 	defer f.Close()
-	fmt.Println(temp.CONFIG)
 	t, err := template.New("config").Parse(temp.CONFIG)
 	if err != nil {
 		return err
