@@ -2,10 +2,11 @@ package create
 
 import (
 	"errors"
-	temp "goinit/template"
 	"os"
 	"path"
 	"text/template"
+
+	temp "github.com/alphayan/goinit/template"
 )
 
 // GOPATHSRC $GOPATH/src
