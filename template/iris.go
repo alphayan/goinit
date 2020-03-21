@@ -2,7 +2,7 @@ package temp
 
 const IRIS = `package main
 
-import "github.com/kataras/iris"
+import "github.com/kataras/iris/v12"
 
 func initRouter() {
 	app := iris.Default()

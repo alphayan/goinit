@@ -1,15 +1,17 @@
 # goinit    
+goinit  create  a  single package go project  in  `$GOPATH/src/ or use go mod`   
 
-
-goinit  create  a  single package go  project  in  `$GOPATH/src/`   
-
-
+## 2020-03-21 update
+add go mod      
+add Dockerfile  
+add docker-compose.yml  
+//TODO:postgresql 
 ## Start using it
 
 Download and install it:    
 `$ go get -u -v github.com/alphayan/goinit`     
 Create a go project:    
-`$ goinit -c projectname`   
+`$ goinit -c projectname -f echo -o xorm -m`   
 
 ## Get help
 Read help dockument:    
@@ -24,6 +26,10 @@ Read help dockument:
     |- -redis.go
     |- -router.go
     |- -.gitignore
+    |- -config.toml
+    |- -go.mod
+    |- -Dockerfile
+    |- -docker-compose.yml
 ```
 ## Tips
 打包成可执行程序并压缩     

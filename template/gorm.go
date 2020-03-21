@@ -1,6 +1,6 @@
 package temp
 
-const GORM = `package main
+const GORM_MYSQL = `package main
 
 import (
 	_ "github.com/go-sql-driver/mysql"
@@ -39,3 +39,4 @@ func Database() *gorm.DB {
 	return connectionDB
 }
 `
+const GORM_POSTGRESQL = ``

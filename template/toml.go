@@ -16,7 +16,8 @@ DBPort="3306"
 DBUsername="root"
 DBPassword="password"
 DBName="test"
-
+#端口号
+Port=":8080"
 #develop
 [dev]
 #redis配置
@@ -30,4 +31,6 @@ DBPort="3306"
 DBUsername="root"
 DBPassword="password"
 DBName="test"
+#端口号
+Port=":8080"
 `

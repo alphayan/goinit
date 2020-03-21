@@ -1,4 +1,5 @@
 # go语言代码优化第三方库
+
 ### 更快的统一检查代码工具（2018.08.15 update）
 `Linters Runner for Go. 5x faster than gometalinter. Nice colored output. Can report only new issues. Fewer false-positives. Yaml/toml config. https://golangci.com`
 

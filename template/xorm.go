@@ -1,10 +1,10 @@
 package temp
 
-const XORM = `package main
+const XORM_MYSQL = `package main
 
 import (
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/go-xorm/xorm"
+	"xorm.io/xorm"
 
 	"time"
 )
@@ -39,3 +39,4 @@ func Database() *xorm.Engine {
 	return connectionDB
 }
 `
+const XORM_POSTGRESQL = ``
