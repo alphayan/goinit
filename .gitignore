@@ -17,3 +17,5 @@
 .idea/
 .goinit
 vendor/
+goinit
+goinit_*

@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/alphayan/goinit/create"
 
@@ -19,6 +20,10 @@ var rootCmd = &cobra.Command{
 	Use:   "goinit",
 	Short: "a tool to create a web application quickly with mysql,orm,redis,config,router",
 	Run: func(cmd *cobra.Command, args []string) {
+		if runtime.Version() < "go1.13" {
+			fmt.Println("error:", "go version must above go1.13")
+			return
+		}
 		if err := create.Create(dir, frame, orm, db, module); err != nil {
 			fmt.Println("error:", err)
 			return
