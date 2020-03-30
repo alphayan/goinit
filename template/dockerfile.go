@@ -9,7 +9,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositorie
     && apk update \
     && apk add upx \
     && rm -rf /var/cache/apk/* /tmp/* /var/tmp/* $HOME/.cache \
-    && go build -mod=vendor -ldflags '-w -s' -o {{.}} \
+    && go build -mod=vendor -ldflags '-w -s -extldflags "-static"' -o {{.}} \
     && upx -9 {{.}} \
 	&& cp {{.}} /run \
 	&& cp config.toml /run

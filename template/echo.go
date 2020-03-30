@@ -8,11 +8,12 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/labstack/echo/v4"
+	echo "github.com/labstack/echo/v4"
 )
 
 func initRouter() {
 	e := echo.New()
+	e.HideBanner=true
 	e.GET("/", func(c echo.Context) error {
 		return c.String(200, "Hello, World!")
 	})
