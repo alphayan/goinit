@@ -19,7 +19,8 @@ func initRouter() {
 	})
     go func() {
 		if err := e.Start(conf.Port); err != nil {
-			logger.Info().Msg("shutting down the server")
+			logger.Error().Msg("start server error:" + err.Error())
+			logger.Fatal().Msg("shutting down the server")
 		}
 	}()
 
