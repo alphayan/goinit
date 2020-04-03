@@ -21,6 +21,9 @@ func initDB() {
 			continue
 		}
 		connectionDB = conn
+		connectionDB.LogMode(conf.DBDebug)
+		connectionDB.DB().SetMaxIdleConns(conf.DBMaxIdleConns)
+		connectionDB.DB().SetMaxOpenConns(conf.DBMaxOpenConns)
 		return
 	}
 	logger.Fatal().Msgf("Init Mysql 5 times error,exist")
@@ -55,7 +58,9 @@ func Database() *gorm.DB {
 		connectionDB = connectToDB()
 		connected = connectionDB.DB().Ping()
 	}
-	connectionDB.LogMode(true)
+	connectionDB.LogMode(conf.DBDebug)
+	connectionDB.DB().SetMaxIdleConns(conf.DBMaxIdleConns)
+	connectionDB.DB().SetMaxOpenConns(conf.DBMaxOpenConns)
 	return connectionDB
 }
 `

@@ -16,12 +16,15 @@ type Config struct {
 	RedisPassword string //redis密码
 	RedisDB       int    //redis数据库 0-15
 
-	DB         bool   //开启DB
-	DBHost     string //DB地址
-	DBPort     string //DB端口
-	DBUsername string //DB用户
-	DBPassword string //DB密码
-	DBName     string //DB数据库
+	DB             bool   //开启DB
+	DBHost         string //DB地址
+	DBPort         string //DB端口
+	DBUsername     string //DB用户
+	DBPassword     string //DB密码
+	DBName         string //DB数据库
+	DBDebug        bool   //开启数据库sql语句
+	DBMaxIdleConns int    //db最大连接池
+	DBMaxOpenConns int    //db最大连接数
 
 	Port string //http端口
 }
