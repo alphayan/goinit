@@ -24,7 +24,7 @@ func initRedis() {
 		connectionRedis = conn
 		return
 	}
-	logger.Fatal().Msg("Init  Redis 5 times error,exist")
+	logger.Fatal().Msg("Init  Redis 5 times error,exit")
 
 }
 func connectToRedis() *redis.Client {
@@ -43,7 +43,7 @@ func Redis() *redis.Client {
 	i := 0
 	for connected != nil {
 		if i > 4 {
-			logger.Fatal().Msg("Connection to Redis 5 times error,exist")
+			logger.Fatal().Msg("Connection to Redis 5 times error,exit")
 		}
 		i++
 		logger.Error().Msg(connected.Error())

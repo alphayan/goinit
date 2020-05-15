@@ -22,7 +22,7 @@ func initDB() {
 		connectionDB = conn
 		return
 	}
-	logger.Fatal().Msgf("Init Mysql 5 times error,exist")
+	logger.Fatal().Msgf("Init Mysql 5 times error,exit")
 }
 func connectToDB() *sql.DB {
 	path := conf.DBUsername + ":" + conf.DBPassword + "@tcp(" + conf.DBHost + ":" + conf.DBPort + ")/" + conf.DBName + "?charset=utf8&timeout=5s"
@@ -41,7 +41,7 @@ func Database() *sql.DB {
 	i := 0
 	for connected != nil {
 		if i > 4 {
-			logger.Fatal().Msgf("Connected Mysql 5 times error,exist")
+			logger.Fatal().Msgf("Connected Mysql 5 times error,exit")
 		}
 		i++
 		logger.Error().Msg(connected.Error())

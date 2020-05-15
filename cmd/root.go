@@ -70,10 +70,7 @@ func init() {
 			(High performance, minimalist Go web framework https://echo.labstack.com)
 		iris:
 			(The fastest backend community-driven web framework on (THIS) Earth. Can your favourite web framework do that? 
-	    	👉 http://bit.ly/iriscandothat1 orm even http://bit.ly/iriscandothat2 https://iris-go.com)
-		go-json-rest:
-			(A quick and easy way to setup a RESTful JSON API https://ant0ine.github.io/go-json-rest/)
-			default is use net/http`)
+	    	👉 http://bit.ly/iriscandothat1 orm even http://bit.ly/iriscandothat2 https://iris-go.com)`)
 
 	rootCmd.Flags().BoolVarP(&module, "module", "m",
 		false, "creat a new project use go.mod")

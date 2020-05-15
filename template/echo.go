@@ -23,14 +23,14 @@ func initRouter() {
 			logger.Fatal().Msg("shutting down the server")
 		}
 	}()
-
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := e.Shutdown(ctx); err != nil {
-		logger.Fatal().Msg(err.Error())
+		logger.Error().Msg("shutting down the server error:" + err.Error())
+		logger.Fatal().Msg("shutting down the server")
 	}
 }
 `
