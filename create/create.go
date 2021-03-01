@@ -297,6 +297,7 @@ func NewModel(dir, fn string) error {
 	}
 	return t.Execute(f, com)
 }
+
 // NewResponse create response.go
 func NewResponse(dir string) error {
 	f, err := os.Create(path.Join(dir, "s_response.go"))
