@@ -12,6 +12,7 @@ import (
 
 var (
 	dir, frame, orm, db string
+	str                 *[]string
 	module              bool
 )
 
@@ -20,11 +21,11 @@ var rootCmd = &cobra.Command{
 	Use:   "goinit",
 	Short: "a tool to create a web application quickly with mysql,orm,redis,config,router",
 	Run: func(cmd *cobra.Command, args []string) {
-		if runtime.Version() < "go1.13" {
-			fmt.Println("error:", "go version must above go1.13")
+		if runtime.Version() < "go1.16" {
+			fmt.Println("error:", "go version must above go1.16")
 			return
 		}
-		if err := create.Create(dir, frame, orm, db, module); err != nil {
+		if err := create.Create(dir, frame, orm, db, module, str); err != nil {
 			fmt.Println("error:", err)
 			return
 		}
@@ -73,5 +74,7 @@ func init() {
 	    	👉 http://bit.ly/iriscandothat1 orm even http://bit.ly/iriscandothat2 https://iris-go.com)`)
 
 	rootCmd.Flags().BoolVarP(&module, "module", "m",
-		false, "creat a new project use go.mod")
+		true, "creat a new project use go.mod")
+	str = rootCmd.Flags().StringSliceP("struct", "s", []string{},
+		"creat a struct controller and model")
 }

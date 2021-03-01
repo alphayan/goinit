@@ -1,6 +1,4 @@
-package temp
-
-const TOML = `#运行模式
+#运行模式
 [Runmode]
 Runmode="dev"
 #production
@@ -26,13 +24,13 @@ Port=":8080"
 #develop
 [dev]
 #redis配置
-Redis=true
+Redis=false
 RedisHost="192.168.0.104"
 RedisPort="6379"
 RedisPassword=""
 RedisDB=0
 #DB配置
-DB=true
+DB=false
 DBHost="192.168.0.104"
 DBPort="3306"
 DBUsername="root"
@@ -43,4 +41,3 @@ DBMaxIdleConns=99
 DBMaxOpenConns=999
 #端口号
 Port=":8080"
-`

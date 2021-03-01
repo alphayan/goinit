@@ -1,15 +1,15 @@
-package temp
-
-const DOCKERFILE = `FROM golang:alpine
+FROM golang:alpine
 MAINTAINER alphayan "alphayyq@163.com"
 WORKDIR /build
 COPY . /build
 ENV CGO_ENABLED=0
+ENV GO111MODULE="on"
+ENV GOPROXY="https://goproxy.cn,https://goproxy.io,direct"
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories \
     && apk update \
     && apk add upx \
     && rm -rf /var/cache/apk/* /tmp/* /var/tmp/* $HOME/.cache \
-    && go build -mod=vendor -ldflags '-w -s -extldflags "-static"' -o {{.}} \
+    && go build -ldflags '-w -s -extldflags "-static"' -o {{.}} \
     && upx -9 {{.}} \
 	&& cp {{.}} /run \
 	&& cp config.toml /run
@@ -25,4 +25,3 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositorie
     && echo "Asia/Shanghai" > /etc/timezone \
     && rm -rf /var/cache/apk/* /tmp/* /var/tmp/* $HOME/.cache
 CMD ["./{{.}}"]
-`

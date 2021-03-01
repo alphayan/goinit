@@ -1,9 +1,7 @@
-package temp
-
-// CONFIG ...
-const CONFIG = `package main
+package main
 
 import (
+	"github.com/fsnotify/fsnotify"
 	"github.com/rs/zerolog"
 	"github.com/spf13/viper"
 )
@@ -51,8 +49,8 @@ var logger = zerolog.New(zerolog.NewConsoleWriter(func(w *zerolog.ConsoleWriter)
 
 func initConfig() {
 	viper.SetConfigName("config")      //  设置配置文件名 (不带后缀)
-	viper.AddConfigPath("/etc/new/")   // 第一个搜索路径
-	viper.AddConfigPath("$HOME/.new/") // 可以多次调用添加路径
+	viper.AddConfigPath("/etc/{{.}}/")   // 第一个搜索路径
+	viper.AddConfigPath("$HOME/.{{.}}/") // 可以多次调用添加路径
 	viper.AddConfigPath(".")           // 比如添加当前目录
 	err := viper.ReadInConfig()        // 搜索路径，并读取配置数据
 	if err != nil {
@@ -67,7 +65,16 @@ func initConfig() {
 	} else {
 		*conf = tc.Pro
 	}
-	logger.Info().Msgf("%+v", conf)
+	logger.Info().Msgf("%+v\n", conf)
 	logger.Info().Msg("初始化config成功")
+	viper.WatchConfig()
+	viper.OnConfigChange(func(in fsnotify.Event) {
+		viper.ReadInConfig()
+		viper.Unmarshal(tc)
+		if tc.Runmode.Runmode == "dev" {
+			*conf = tc.Dev
+		} else {
+			*conf = tc.Pro
+		}
+	})
 }
-`

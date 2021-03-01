@@ -1,6 +1,4 @@
-package temp
-
-const DOCKER_COMPOSE = `version: '3.7'
+version: '3.7'
 services:
   mysql:
     image: mysql
@@ -54,4 +52,3 @@ services:
       - {{.DB}}
       - redis
     restart: unless-stopped
-`

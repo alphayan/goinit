@@ -1,18 +1,23 @@
 package create
 
 import (
+	"embed"
 	"errors"
 	"fmt"
 	"os"
 	"os/exec"
 	"path"
+	"strings"
 	"text/template"
 
-	temp "github.com/alphayan/goinit/template"
+	temp "github.com/alphayan/goinit/create/template"
 )
 
 // GOPATHSRC $GOPATH/src
 var GOPATHSRC string
+
+//go:embed template/*
+var fs embed.FS
 
 func init() {
 	if os.Getenv("GOPATH") == "" {
@@ -29,7 +34,8 @@ func isExist(path string) bool {
 }
 
 // Create create a dir in $GOPATH/src/
-func Create(dir, frame, orm, db string, module bool) error {
+func Create(dir, frame, orm, db string, module bool, str *[]string) error {
+
 	var pth = dir
 	if module {
 		pth = dir
@@ -51,8 +57,13 @@ func Create(dir, frame, orm, db string, module bool) error {
 	NewRouter(pth, frame)
 	NewGitignore(pth)
 	NewToml(pth)
-	NewDockerfile(dir)
-	NewDockerCompose(dir, db)
+	NewDockerfile(pth)
+	NewDockerCompose(pth, db)
+	for _, v := range *str {
+		NewController(pth, v)
+		NewModel(pth, v)
+	}
+	NewResponse(pth)
 	if module {
 		os.Chdir(pth)
 		os.Setenv("GO111MODULE", "on")
@@ -66,9 +77,6 @@ func Create(dir, frame, orm, db string, module bool) error {
 		cmd3 := exec.Command("/bin/bash", "-c", "go fmt ./...")
 		fmt.Println("go fmt ./...")
 		cmd3.Run()
-		cmd4 := exec.Command("/bin/bash", "-c", "go mod vendor")
-		fmt.Println("go mod vendor")
-		cmd4.Run()
 	}
 	return nil
 }
@@ -80,18 +88,26 @@ func NewMain(dir string) error {
 		return err
 	}
 	defer f.Close()
-	f.WriteString(temp.MAIN)
+	data, err := fs.ReadFile("template/main.tmpl")
+	if err != nil {
+		return err
+	}
+	f.Write(data)
 	return f.Sync()
 }
 
 // NewRedis create redis.go
 func NewRedis(dir string) error {
-	f, err := os.Create(path.Join(dir, "redis.go"))
+	f, err := os.Create(path.Join(dir, "s_redis.go"))
 	if err != nil {
 		return err
 	}
 	defer f.Close()
-	f.WriteString(temp.REDIS)
+	data, err := fs.ReadFile("template/redis.tmpl")
+	if err != nil {
+		return err
+	}
+	f.Write(data)
 	return f.Sync()
 }
 
@@ -102,18 +118,22 @@ func NewGitignore(dir string) error {
 		return err
 	}
 	defer f.Close()
-	f.WriteString(temp.GITIGNORE)
+	data, err := fs.ReadFile("template/gitignore.tmpl")
+	if err != nil {
+		return err
+	}
+	f.Write(data)
 	return f.Sync()
 }
 
 // NewConfig create config.go
 func NewConfig(dir string) error {
-	f, err := os.Create(path.Join(dir, "config.go"))
+	f, err := os.Create(path.Join(dir, "s_config.go"))
 	if err != nil {
 		return err
 	}
 	defer f.Close()
-	t, err := template.New("config").Parse(temp.CONFIG)
+	t, err := template.ParseFS(fs, "template/config.tmpl")
 	if err != nil {
 		return err
 	}
@@ -122,26 +142,26 @@ func NewConfig(dir string) error {
 
 // NewDB create db.go
 func NewDB(dir, orm, db string) error {
-	f, err := os.Create(path.Join(dir, "db.go"))
+	f, err := os.Create(path.Join(dir, "s_db.go"))
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 	switch db {
-	case "postgresql":
-		switch orm {
-		case "gorm":
-			f.WriteString(temp.GORM_POSTGRESQL)
-		case "xorm":
-			f.WriteString(temp.XORM_POSTGRESQL)
-		default:
-			f.WriteString(temp.DB_POSTGRESQL)
-		}
-	case "mongodb":
 	default:
 		switch orm {
 		case "gorm":
-			f.WriteString(temp.GORM_MYSQL)
+			err := func() error {
+				data, err := fs.ReadFile("template/gorm.tmpl")
+				if err != nil {
+					return err
+				}
+				f.Write(data)
+				return nil
+			}()
+			if err != nil {
+				return err
+			}
 		case "xorm":
 			f.WriteString(temp.XORM_MYSQL)
 		default:
@@ -154,14 +174,24 @@ func NewDB(dir, orm, db string) error {
 
 // NewRouter create router.go
 func NewRouter(dir, frame string) error {
-	f, err := os.Create(path.Join(dir, "router.go"))
+	f, err := os.Create(path.Join(dir, "s_router.go"))
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 	switch frame {
 	case "echo":
-		f.WriteString(temp.ECHO)
+		err := func() error {
+			data, err := fs.ReadFile("template/echo.tmpl")
+			if err != nil {
+				return err
+			}
+			f.Write(data)
+			return nil
+		}()
+		if err != nil {
+			return err
+		}
 	case "gin":
 		f.WriteString(temp.GIN)
 	case "iris":
@@ -179,7 +209,11 @@ func NewToml(dir string) error {
 		return err
 	}
 	defer f.Close()
-	f.WriteString(temp.TOML)
+	data, err := fs.ReadFile("template/toml.tmpl")
+	if err != nil {
+		return err
+	}
+	f.Write(data)
 	return f.Sync()
 }
 
@@ -190,7 +224,7 @@ func NewDockerfile(dir string) error {
 		return err
 	}
 	defer f.Close()
-	t, err := template.New("Dockerfile").Parse(temp.DOCKERFILE)
+	t, err := template.ParseFS(fs, "template/dockerfile.tmpl")
 	if err != nil {
 		return err
 	}
@@ -204,7 +238,7 @@ func NewDockerCompose(dir, db string) error {
 		return err
 	}
 	defer f.Close()
-	t, err := template.New("docker-compose.yml").Parse(temp.DOCKER_COMPOSE)
+	t, err := template.ParseFS(fs, "template/docker-compose.tmpl")
 	if err != nil {
 		return err
 	}
@@ -216,4 +250,64 @@ func NewDockerCompose(dir, db string) error {
 		DB:  db,
 	}
 	return t.Execute(f, com)
+}
+
+// NewController create controller
+func NewController(dir, fn string) error {
+	f, err := os.Create(path.Join(dir, "c_"+strings.ToLower(fn)+".go"))
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	t, err := template.ParseFS(fs, "template/controller.tmpl")
+	if err != nil {
+		return err
+	}
+	var com = struct {
+		Name      string
+		ShortName string
+		LowName   string
+	}{
+		Name:      fn,
+		ShortName: strings.ToLower(fn)[:1],
+		LowName:   strings.ToLower(fn),
+	}
+	return t.Execute(f, com)
+}
+
+// NewModel create model
+func NewModel(dir, fn string) error {
+	f, err := os.Create(path.Join(dir, "m_"+strings.ToLower(fn)+".go"))
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	t, err := template.ParseFS(fs, "template/model.tmpl")
+	if err != nil {
+		return err
+	}
+	var com = struct {
+		Name      string
+		ShortName string
+		LowName   string
+	}{
+		Name:      fn,
+		ShortName: strings.ToLower(fn)[:1],
+		LowName:   strings.ToLower(fn),
+	}
+	return t.Execute(f, com)
+}
+// NewResponse create response.go
+func NewResponse(dir string) error {
+	f, err := os.Create(path.Join(dir, "s_response.go"))
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	data, err := fs.ReadFile("template/response.tmpl")
+	if err != nil {
+		return err
+	}
+	f.Write(data)
+	return f.Sync()
 }

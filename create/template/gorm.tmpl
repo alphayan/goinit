@@ -1,0 +1,42 @@
+package main
+
+import (
+	"log"
+	"time"
+
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	gormlog "gorm.io/gorm/logger"
+)
+
+var connectionDB *gorm.DB
+
+func initDB() {
+	newLogger := gormlog.New(
+		log.New(logger, "\r\n", log.LstdFlags), // io writer
+		gormlog.Config{
+			SlowThreshold: time.Second,    // 慢 SQL 阈值
+			LogLevel:      gormlog.Silent, // Log level
+			Colorful:      false,          // 禁用彩色打印
+		},
+	)
+	path := conf.DBUsername + ":" + conf.DBPassword + "@tcp(" + conf.DBHost + ":" + conf.DBPort + ")/" + conf.DBName + "?charset=utf8&timeout=5s"
+	for i := 0; i < 5; i++ {
+		conn, err := gorm.Open(mysql.Open(path), &gorm.Config{
+			PrepareStmt: true,
+			Logger:      newLogger,
+		})
+		if err != nil {
+			logger.Error().Msgf("Init Mysql error: %s\n", err.Error())
+			time.Sleep(5 * time.Second)
+			continue
+		}
+		connectionDB = conn
+		if db, err := conn.DB(); err == nil {
+			db.SetMaxIdleConns(conf.DBMaxIdleConns)
+			db.SetMaxOpenConns(conf.DBMaxOpenConns)
+		}
+		return
+	}
+	logger.Fatal().Msgf("Init Mysql 5 times error,exist")
+}
