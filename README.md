@@ -1,6 +1,9 @@
 # goinit    
 goinit  create  a  single package go project  in  `$GOPATH/src/ or use go mod`   
 
+## 2021-03-03 update
+update to go1.16
+
 ## 2020-03-21 update
 add go mod      
 add Dockerfile  
@@ -11,7 +14,7 @@ add docker-compose.yml
 Download and install it:    
 `$ go get -u -v github.com/alphayan/goinit`     
 Create a go project:    
-`$ goinit -c projectname -f echo -o xorm -m`   
+`$ goinit -c projectname -f echo -o xorm -s User,Log`   
 
 ## Get help
 Read help dockument:    
@@ -19,12 +22,15 @@ Read help dockument:
 
 ## Project directory hierarchy
 ``` 
-<project>/       
-    |- -main.go     
-    |- -config.go       
-    |- -db.go       
-    |- -redis.go
-    |- -router.go
+<project>/ 
+    |- -c_controller.go
+    |- -m_model.go 
+    |- -main.go 
+    |- -s_config.go       
+    |- -s_db.go       
+    |- -s_redis.go
+    |- -s_router.go
+    |- -s_response.go
     |- -.gitignore
     |- -config.toml
     |- -go.mod
@@ -33,5 +39,5 @@ Read help dockument:
 ```
 ## Tips
 打包成可执行程序并压缩     
-1.使用go build -ldflags '-w -s'进行代码编译，得到.exe文件    
+1.使用go build -ldflags '-w -s -extldflags "-static"'进行代码编译，得到.exe文件    
 2.使用upx小工具进行压缩，使得.exe文件大幅度缩小 [upx官网](https://upx.github.io/ "点击upx下载")
