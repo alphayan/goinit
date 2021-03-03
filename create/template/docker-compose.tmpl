@@ -39,16 +39,14 @@ services:
     restart: unless-stopped
     volumes:
       - ~/data/postgresql:/var/lib/postgresql/data
-  {{.APP}}:
-    image: {{.APP}}
+  {{.}}:
+    image: {{.}}
     ports:
       - "8080:8080"
     links:
       - mysql
       - redis
-      - mongo
-      - postgres
     depends_on:
-      - {{.DB}}
+      - mysql
       - redis
     restart: unless-stopped

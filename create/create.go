@@ -9,8 +9,6 @@ import (
 	"path"
 	"strings"
 	"text/template"
-
-	temp "github.com/alphayan/goinit/create/template"
 )
 
 // GOPATHSRC $GOPATH/src
@@ -34,7 +32,7 @@ func isExist(path string) bool {
 }
 
 // Create create a dir in $GOPATH/src/
-func Create(dir, frame, orm, db string, module bool, str *[]string) error {
+func Create(dir, frame, orm string, module bool, str *[]string) error {
 
 	var pth = dir
 	if module {
@@ -52,13 +50,13 @@ func Create(dir, frame, orm, db string, module bool, str *[]string) error {
 	}
 	NewMain(pth)
 	NewConfig(pth)
-	NewDB(pth, orm, db)
+	NewDB(pth, orm)
 	NewRedis(pth)
 	NewRouter(pth, frame)
 	NewGitignore(pth)
 	NewToml(pth)
 	NewDockerfile(pth)
-	NewDockerCompose(pth, db)
+	NewDockerCompose(pth)
 	for _, v := range *str {
 		NewController(pth, v, frame)
 		NewModel(pth, v, orm)
@@ -141,39 +139,37 @@ func NewConfig(dir string) error {
 }
 
 // NewDB create db.go
-func NewDB(dir, orm, db string) error {
+func NewDB(dir, orm string) error {
 	f, err := os.Create(path.Join(dir, "s_db.go"))
 	if err != nil {
 		return err
 	}
 	defer f.Close()
-	switch db {
+
+	switch orm {
+	case "xorm":
+		err := func() error {
+			data, err := fs.ReadFile("template/xorm.tmpl")
+			if err != nil {
+				return err
+			}
+			f.Write(data)
+			return nil
+		}()
+		if err != nil {
+			return err
+		}
 	default:
-		switch orm {
-		case "xorm":
-			err := func() error {
-				data, err := fs.ReadFile("template/xorm.tmpl")
-				if err != nil {
-					return err
-				}
-				f.Write(data)
-				return nil
-			}()
+		err := func() error {
+			data, err := fs.ReadFile("template/gorm.tmpl")
 			if err != nil {
 				return err
 			}
-		default:
-			err := func() error {
-				data, err := fs.ReadFile("template/gorm.tmpl")
-				if err != nil {
-					return err
-				}
-				f.Write(data)
-				return nil
-			}()
-			if err != nil {
-				return err
-			}
+			f.Write(data)
+			return nil
+		}()
+		if err != nil {
+			return err
 		}
 	}
 
@@ -188,20 +184,20 @@ func NewRouter(dir, frame string) error {
 	}
 	defer f.Close()
 	switch frame {
-	case "echo":
-		err := func() error {
-			data, err := fs.ReadFile("template/echo.tmpl")
-			if err != nil {
-				return err
-			}
-			f.Write(data)
-			return nil
-		}()
-		if err != nil {
-			return err
-		}
 	case "gin":
 		err := func() error {
+			data, err := fs.ReadFile("template/gin.tmpl")
+			if err != nil {
+				return err
+			}
+			f.Write(data)
+			return nil
+		}()
+		if err != nil {
+			return err
+		}
+	default:
+		err := func() error {
 			data, err := fs.ReadFile("template/echo.tmpl")
 			if err != nil {
 				return err
@@ -212,10 +208,6 @@ func NewRouter(dir, frame string) error {
 		if err != nil {
 			return err
 		}
-	case "iris":
-		f.WriteString(temp.IRIS)
-	default:
-		f.WriteString(temp.NETHTTP)
 	}
 	return f.Sync()
 }
@@ -250,7 +242,7 @@ func NewDockerfile(dir string) error {
 }
 
 // NewDockerCompose create docker-compose.yml
-func NewDockerCompose(dir, db string) error {
+func NewDockerCompose(dir string) error {
 	f, err := os.Create(path.Join(dir, "docker-compose.yml"))
 	if err != nil {
 		return err
@@ -260,14 +252,7 @@ func NewDockerCompose(dir, db string) error {
 	if err != nil {
 		return err
 	}
-	var com = struct {
-		APP string
-		DB  string
-	}{
-		APP: dir,
-		DB:  db,
-	}
-	return t.Execute(f, com)
+	return t.Execute(f, dir)
 }
 
 // NewController create controller
@@ -284,7 +269,7 @@ func NewController(dir, fn, frame string) error {
 		if err != nil {
 			return err
 		}
-	case "echo":
+	default:
 		t, err = template.ParseFS(fs, "template/controller_echo.tmpl")
 		if err != nil {
 			return err
@@ -312,13 +297,13 @@ func NewModel(dir, fn, orm string) error {
 	defer f.Close()
 	var t *template.Template
 	switch orm {
-	case "gorm":
-		t, err = template.ParseFS(fs, "template/model_gorm.tmpl")
+	case "xorm":
+		t, err = template.ParseFS(fs, "template/model_xorm.tmpl")
 		if err != nil {
 			return err
 		}
-	case "xorm":
-		t, err = template.ParseFS(fs, "template/model_xorm.tmpl")
+	default:
+		t, err = template.ParseFS(fs, "template/model_gorm.tmpl")
 		if err != nil {
 			return err
 		}

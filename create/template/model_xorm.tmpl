@@ -4,7 +4,7 @@ type {{.Name}} struct {
 	ID int64
 }
 
-func ( *{{.Name}}) create() error {
+func ({{.ShortName}}  *{{.Name}}) create() error {
 	_, err := connectionDB.Insert({{.ShortName}})
 	return err
 }

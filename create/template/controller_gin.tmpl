@@ -3,61 +3,67 @@ package main
 import (
 	"strconv"
 
-	"github.com/labstack/echo/v4"
+	"github.com/gin-gonic/gin"
 )
 
 func init() {
 	ops = append(ops, add{{.Name}})
 }
-func add{{.Name}}(e *echo.Echo) {
+func add{{.Name}}(e *gin.Engine) {
 	apiV1 := e.Group("/api/v1")
-	apiV1.GET("/{{.LowName}}s/:id", get{{.Name}}).Name = "根据id获取{{.LowName}}"
-	apiV1.GET("/{{.LowName}}s", gets{{.Name}}).Name = "获取所有{{.LowName}}"
-	apiV1.PUT("/{{.LowName}}s/:id", put{{.Name}}).Name = "根据id更新{{.LowName}}"
-	apiV1.POST("/{{.LowName}}s", post{{.Name}}).Name = "创建{{.LowName}}"
-	apiV1.DELETE("/{{.LowName}}s/:id", del{{.Name}}).Name = "根据id删除{{.LowName}}"
+	apiV1.GET("/{{.LowName}}s/:id", get{{.Name}})
+	apiV1.GET("/{{.LowName}}s", gets{{.Name}})
+	apiV1.PUT("/{{.LowName}}s/:id", put{{.Name}})
+	apiV1.POST("/{{.LowName}}s", post{{.Name}})
+	apiV1.DELETE("/{{.LowName}}s/:id", del{{.Name}})
 }
-func get{{.Name}}(c echo.Context) error {
+func get{{.Name}}(c *gin.Context) {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 	{{.ShortName}} := &{{.Name}}{ID: id}
 	if err := {{.ShortName}}.get(); err != nil {
-		return c.JSON(200, NewRespFault("获取{{.LowName}}失败："+err.Error()))
+		c.JSON(200, NewRespFault("获取{{.LowName}}失败："+err.Error()))
+		return
 	}
-	return c.JSON(200, NewRespWithData(200, "获取{{.LowName}}成功", {{.ShortName}}))
+	c.JSON(200, NewRespWithData(200, "获取{{.LowName}}成功", {{.ShortName}}))
 }
-func gets{{.Name}}(c echo.Context) error {
+func gets{{.Name}}(c *gin.Context) {
 	{{.ShortName}} := new({{.Name}})
-	limit, _ := strconv.Atoi(c.QueryParam("limit"))
-	page, _ := strconv.Atoi(c.QueryParam("page"))
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	page, _ := strconv.Atoi(c.Query("page"))
 	{{.ShortName}}s, count := {{.ShortName}}.gets(limit, page)
-	return c.JSON(200, NewRespWithCount(200, "获取{{.LowName}}列表成功", {{.ShortName}}s, count))
+	c.JSON(200, NewRespWithCount(200, "获取{{.LowName}}列表成功", {{.ShortName}}s, count))
 }
-func post{{.Name}}(c echo.Context) error {
+func post{{.Name}}(c *gin.Context) {
 	{{.ShortName}} := &{{.Name}}{}
 	if err := c.Bind({{.ShortName}}); err != nil {
-		return c.JSON(200, NewRespBad("参数失败:"+err.Error()))
+		c.JSON(200, NewRespBad("参数失败:"+err.Error()))
+		return
 	}
 	if err := {{.ShortName}}.update(); err != nil {
-		return c.JSON(200, NewRespFault("创建{{.LowName}}失败:"+err.Error()))
+		c.JSON(200, NewRespFault("创建{{.LowName}}失败:"+err.Error()))
+		return
 	}
-	return c.JSON(200, NewRespOK("创建{{.LowName}}成功"))
+	c.JSON(200, NewRespOK("创建{{.LowName}}成功"))
 }
-func put{{.Name}}(c echo.Context) error {
+func put{{.Name}}(c *gin.Context) {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 	{{.ShortName}} := &{{.Name}}{ID: id}
 	if err := c.Bind({{.ShortName}}); err != nil {
-		return c.JSON(200, NewRespBad("参数失败:"+err.Error()))
+		c.JSON(200, NewRespBad("参数失败:"+err.Error()))
+		return
 	}
 	if err := {{.ShortName}}.update(); err != nil {
-		return c.JSON(200, NewRespFault("更新{{.LowName}}失败:"+err.Error()))
+		c.JSON(200, NewRespFault("更新{{.LowName}}失败:"+err.Error()))
+		return
 	}
-	return c.JSON(200, NewRespOK("更新{{.LowName}}成功"))
+	c.JSON(200, NewRespOK("更新{{.LowName}}成功"))
 }
-func del{{.Name}}(c echo.Context) error {
+func del{{.Name}}(c *gin.Context) {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 	{{.ShortName}} := &{{.Name}}{ID: id}
 	if err := {{.ShortName}}.delete(); err != nil {
-		return c.JSON(200, NewRespFault("删除{{.LowName}}失败:"+err.Error()))
+		c.JSON(200, NewRespFault("删除{{.LowName}}失败:"+err.Error()))
+		return
 	}
-	return c.JSON(200, NewRespOK("删除{{.LowName}}成功"))
+	c.JSON(200, NewRespOK("删除{{.LowName}}成功"))
 }
