@@ -1,0 +1,32 @@
+package main
+
+type {{.Name}} struct {
+	ID int64
+}
+
+func ( *{{.Name}}) create() error {
+	_, err := connectionDB.Insert({{.ShortName}})
+	return err
+}
+
+func ({{.ShortName}} *{{.Name}}) update() error {
+	_, err := connectionDB.ID({{.ShortName}}.ID).Update({{.ShortName}})
+	return err
+}
+
+func ({{.ShortName}} *{{.Name}}) get() error {
+	_, err := connectionDB.ID({{.ShortName}}.ID).Get({{.ShortName}})
+	return err
+}
+
+func ({{.ShortName}} *{{.Name}}) gets(limit, page int) (interface{}, int64) {
+	{{.ShortName}}s, count := []{{.Name}}{}, int64(0)
+	connectionDB.Where("").Find(&{{.ShortName}}s)
+	connectionDB.Where("").Count(&count)
+	return us, count
+}
+
+func ({{.ShortName}} *{{.Name}}) delete() error {
+	_, err := connectionDB.ID({{.ShortName}}.ID).Delete({{.ShortName}})
+	return err
+}

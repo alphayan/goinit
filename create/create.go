@@ -60,8 +60,8 @@ func Create(dir, frame, orm, db string, module bool, str *[]string) error {
 	NewDockerfile(pth)
 	NewDockerCompose(pth, db)
 	for _, v := range *str {
-		NewController(pth, v)
-		NewModel(pth, v)
+		NewController(pth, v, frame)
+		NewModel(pth, v, orm)
 	}
 	NewResponse(pth)
 	if module {
@@ -150,7 +150,19 @@ func NewDB(dir, orm, db string) error {
 	switch db {
 	default:
 		switch orm {
-		case "gorm":
+		case "xorm":
+			err := func() error {
+				data, err := fs.ReadFile("template/xorm.tmpl")
+				if err != nil {
+					return err
+				}
+				f.Write(data)
+				return nil
+			}()
+			if err != nil {
+				return err
+			}
+		default:
 			err := func() error {
 				data, err := fs.ReadFile("template/gorm.tmpl")
 				if err != nil {
@@ -162,10 +174,6 @@ func NewDB(dir, orm, db string) error {
 			if err != nil {
 				return err
 			}
-		case "xorm":
-			f.WriteString(temp.XORM_MYSQL)
-		default:
-			f.WriteString(temp.DB_MYSQL)
 		}
 	}
 
@@ -193,7 +201,17 @@ func NewRouter(dir, frame string) error {
 			return err
 		}
 	case "gin":
-		f.WriteString(temp.GIN)
+		err := func() error {
+			data, err := fs.ReadFile("template/echo.tmpl")
+			if err != nil {
+				return err
+			}
+			f.Write(data)
+			return nil
+		}()
+		if err != nil {
+			return err
+		}
 	case "iris":
 		f.WriteString(temp.IRIS)
 	default:
@@ -253,16 +271,26 @@ func NewDockerCompose(dir, db string) error {
 }
 
 // NewController create controller
-func NewController(dir, fn string) error {
+func NewController(dir, fn, frame string) error {
 	f, err := os.Create(path.Join(dir, "c_"+strings.ToLower(fn)+".go"))
 	if err != nil {
 		return err
 	}
 	defer f.Close()
-	t, err := template.ParseFS(fs, "template/controller.tmpl")
-	if err != nil {
-		return err
+	var t *template.Template
+	switch frame {
+	case "gin":
+		t, err = template.ParseFS(fs, "template/controller_gin.tmpl")
+		if err != nil {
+			return err
+		}
+	case "echo":
+		t, err = template.ParseFS(fs, "template/controller_echo.tmpl")
+		if err != nil {
+			return err
+		}
 	}
+
 	var com = struct {
 		Name      string
 		ShortName string
@@ -276,15 +304,24 @@ func NewController(dir, fn string) error {
 }
 
 // NewModel create model
-func NewModel(dir, fn string) error {
+func NewModel(dir, fn, orm string) error {
 	f, err := os.Create(path.Join(dir, "m_"+strings.ToLower(fn)+".go"))
 	if err != nil {
 		return err
 	}
 	defer f.Close()
-	t, err := template.ParseFS(fs, "template/model.tmpl")
-	if err != nil {
-		return err
+	var t *template.Template
+	switch orm {
+	case "gorm":
+		t, err = template.ParseFS(fs, "template/model_gorm.tmpl")
+		if err != nil {
+			return err
+		}
+	case "xorm":
+		t, err = template.ParseFS(fs, "template/model_xorm.tmpl")
+		if err != nil {
+			return err
+		}
 	}
 	var com = struct {
 		Name      string
