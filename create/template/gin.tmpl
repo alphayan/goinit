@@ -18,12 +18,13 @@ var ops []option
 
 func initRouter() {
 	r := gin.Default()
-	r.Run(conf.Port)
+	for _,v:=range ops{
+    	v(r)
+    }
 	srv := &http.Server{
 		Addr:    conf.Port,
 		Handler: r,
 	}
-
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
 			logger.Printf("listen: %s\n", err)

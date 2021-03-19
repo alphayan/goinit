@@ -39,7 +39,7 @@ func post{{.Name}}(c *gin.Context) {
 		c.JSON(200, NewRespBad("参数失败:"+err.Error()))
 		return
 	}
-	if err := {{.ShortName}}.update(); err != nil {
+	if err := {{.ShortName}}.create(); err != nil {
 		c.JSON(200, NewRespFault("创建{{.LowName}}失败:"+err.Error()))
 		return
 	}

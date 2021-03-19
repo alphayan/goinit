@@ -37,7 +37,7 @@ func post{{.Name}}(c echo.Context) error {
 	if err := c.Bind({{.ShortName}}); err != nil {
 		return c.JSON(200, NewRespBad("参数失败:"+err.Error()))
 	}
-	if err := {{.ShortName}}.update(); err != nil {
+	if err := {{.ShortName}}.create(); err != nil {
 		return c.JSON(200, NewRespFault("创建{{.LowName}}失败:"+err.Error()))
 	}
 	return c.JSON(200, NewRespOK("创建{{.LowName}}成功"))
