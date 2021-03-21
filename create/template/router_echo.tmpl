@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"net/http"
 	"os"
 	"os/signal"
 	"time"
@@ -16,6 +17,7 @@ var ops []option
 func initRouter() {
 	e := echo.New()
 	e.HideBanner = true
+	e.HidePort = true
 	e.GET("/", func(c echo.Context) error {
 		return c.String(200, "Hello, World!")
 	}).Name = "root"
@@ -26,18 +28,19 @@ func initRouter() {
 		logger.Info().Str(v.Name, v.Path).Msg("")
 	}
 	go func() {
-		if err := e.Start(conf.Port); err != nil {
-			logger.Error().Msg("start server error:" + err.Error())
-			logger.Fatal().Msg("shutting down the server")
+		if err := e.Start(conf.Port); err != nil && err != http.ErrServerClosed {
+			logger.Fatal().Err(err).Msg("shutting down the server error.")
 		}
 	}()
+	logger.Info().Msg("run on " + conf.Port)
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
+	logger.Info().Msg("Shutting down server...")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := e.Shutdown(ctx); err != nil {
-		logger.Error().Msg("shutting down the server error:" + err.Error())
-		logger.Fatal().Msg("shutting down the server")
+		logger.Fatal().Err(err).Msg("shutting down the server error.")
 	}
+	logger.Info().Msg("Server exiting")
 }

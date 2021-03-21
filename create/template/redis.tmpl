@@ -17,11 +17,12 @@ func initRedis() {
 			DB:       conf.RedisDB,       // use default DB
 		})
 		if _, err := conn.Ping(context.Background()).Result(); err != nil {
-			logger.Error().Msgf("Init  Redis error: %s", err.Error())
+			logger.Error().Err(err).Msg("Init  Redis error.")
 			time.Sleep(3 * time.Second)
 			continue
 		}
 		connectionRedis = conn
+		logger.Info().Msg("初始化redis成功")
 		return
 	}
 	logger.Fatal().Msg("Init  Redis 5 times error,exit")

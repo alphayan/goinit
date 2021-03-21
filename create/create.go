@@ -186,7 +186,7 @@ func NewRouter(dir, frame string) error {
 	switch frame {
 	case "gin":
 		err := func() error {
-			data, err := fs.ReadFile("template/gin.tmpl")
+			data, err := fs.ReadFile("template/router_gin.tmpl")
 			if err != nil {
 				return err
 			}
@@ -198,7 +198,7 @@ func NewRouter(dir, frame string) error {
 		}
 	default:
 		err := func() error {
-			data, err := fs.ReadFile("template/echo.tmpl")
+			data, err := fs.ReadFile("template/router_echo.tmpl")
 			if err != nil {
 				return err
 			}

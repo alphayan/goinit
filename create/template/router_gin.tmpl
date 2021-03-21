@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"net/http"
 	"os"
 	"os/signal"
@@ -18,26 +17,27 @@ var ops []option
 
 func initRouter() {
 	r := gin.Default()
-	for _,v:=range ops{
-    	v(r)
-    }
+	for _, v := range ops {
+		v(r)
+	}
 	srv := &http.Server{
 		Addr:    conf.Port,
 		Handler: r,
 	}
 	go func() {
-		if err := srv.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
-			logger.Printf("listen: %s\n", err)
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			logger.Fatal().Err(err).Msg("shutting down the server error.")
 		}
 	}()
+	logger.Info().Msg("run on "+conf.Port)
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	logger.Print("Shutting down server...")
+	logger.Info().Msg("Shutting down server...")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
-		logger.Fatal().Msg("Server forced to shutdown: " + err.Error())
+		logger.Fatal().Err(err).Msg("shutting down the server error.")
 	}
-	logger.Print("Server exiting")
+	logger.Info().Msg("Server exiting")
 }

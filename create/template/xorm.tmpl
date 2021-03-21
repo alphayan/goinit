@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	_ "github.com/go-sql-driver/mysql"
 	"xorm.io/xorm"
 )
@@ -8,17 +10,27 @@ import (
 var connectionDB *xorm.Engine
 
 func initDB() {
-	path := conf.DBUsername + ":" + conf.DBPassword + "@tcp(" + conf.DBHost + ":" + conf.DBPort + ")/" + conf.DBName + "?charset=utf8&timeout=5s"
+	path := conf.DBUsername + ":" + conf.DBPassword + "@tcp(" + conf.DBHost + ":" + conf.DBPort + ")/" + conf.DBName + "?charset=utf8mb4&timeout=5s&parseTime=True&loc=Local"
 	for i := 0; i < 5; i++ {
 		conn, err := xorm.NewEngine("mysql", path)
 		if err != nil {
-			logger.Error().Msgf("Init Mysql error: %s\n", err.Error())
+			logger.Error().Err(err).Msg("Init Mysql error.")
+			time.Sleep(5 * time.Second)
 			continue
 		}
-		conn.DB().SetMaxOpenConns(conf.DBMaxOpenConns)
-		conn.DB().SetMaxIdleConns(conf.DBMaxIdleConns)
+		if err := conn.Ping(); err != nil {
+			logger.Error().Err(err).Msg("Ping Mysql error.")
+			time.Sleep(5 * time.Second)
+			continue
+		}
 		connectionDB = conn
+		connectionDB.DB().SetMaxOpenConns(conf.DBMaxOpenConns)
+		connectionDB.DB().SetMaxIdleConns(conf.DBMaxIdleConns)
+		if conf.DBDebug {
+			connectionDB.ShowSQL(true)
+		}
+		logger.Info().Msg("初始化db成功")
 		return
 	}
-	logger.Fatal().Msgf("Init Mysql 5 times error,exist")
+	logger.Fatal().Msg("Init Mysql 5 times error,exist")
 }

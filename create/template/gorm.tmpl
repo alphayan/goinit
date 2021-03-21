@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -13,30 +14,34 @@ var connectionDB *gorm.DB
 
 func initDB() {
 	newLogger := gormlog.New(
-		log.New(logger, "\r\n", log.LstdFlags), // io writer
+		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		gormlog.Config{
-			SlowThreshold: time.Second,    // 慢 SQL 阈值
-			LogLevel:      gormlog.Silent, // Log level
-			Colorful:      false,          // 禁用彩色打印
+			SlowThreshold: time.Second,  // 慢 SQL 阈值
+			LogLevel:      gormlog.Warn, // Log level
+			Colorful:      true,         // 是否彩色打印
 		},
 	)
-	path := conf.DBUsername + ":" + conf.DBPassword + "@tcp(" + conf.DBHost + ":" + conf.DBPort + ")/" + conf.DBName + "?charset=utf8&timeout=5s"
+	if !conf.DBDebug {
+		newLogger = gormlog.Discard
+	}
+	path := conf.DBUsername + ":" + conf.DBPassword + "@tcp(" + conf.DBHost + ":" + conf.DBPort + ")/" + conf.DBName + "?charset=utf8mb4&timeout=5s&parseTime=True&loc=Local"
 	for i := 0; i < 5; i++ {
 		conn, err := gorm.Open(mysql.Open(path), &gorm.Config{
 			PrepareStmt: true,
 			Logger:      newLogger,
 		})
 		if err != nil {
-			logger.Error().Msgf("Init Mysql error: %s\n", err.Error())
+			logger.Error().Err(err).Msg("Init Mysql error.")
 			time.Sleep(5 * time.Second)
 			continue
 		}
 		connectionDB = conn
-		if db, err := conn.DB(); err == nil {
+		if db, err := connectionDB.DB(); err == nil {
 			db.SetMaxIdleConns(conf.DBMaxIdleConns)
 			db.SetMaxOpenConns(conf.DBMaxOpenConns)
 		}
+		logger.Info().Msg("初始化db成功")
 		return
 	}
-	logger.Fatal().Msgf("Init Mysql 5 times error,exist")
+	logger.Fatal().Msg("Init Mysql 5 times error,exist")
 }
