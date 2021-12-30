@@ -33,8 +33,7 @@ func isExist(path string) bool {
 
 // Create create a dir in $GOPATH/src/
 func Create(dir, frame, orm string, module bool, str *[]string) error {
-
-	var pth = dir
+	pth := ""
 	if module {
 		pth = dir
 	} else {
@@ -284,6 +283,9 @@ func NewController(dir, fn, frame string) error {
 		Name:      fn,
 		ShortName: strings.ToLower(fn)[:1],
 		LowName:   strings.ToLower(fn),
+	}
+	if com.ShortName == "c" {
+		com.ShortName = "cc"
 	}
 	return t.Execute(f, com)
 }
