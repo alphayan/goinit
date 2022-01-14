@@ -1,15 +1,15 @@
 package main
 
 type {{.Name}} struct {
-	ID int64
+	Id int64
 }
 
 func ({{.ShortName}} *{{.Name}}) create() error {
-	return connectionDB.Create({{.ShortName}}).Error
+	return connectionDB.Model({{.ShortName}}).Create({{.ShortName}}).Error
 }
 
 func ({{.ShortName}} *{{.Name}}) update() error {
-	return connectionDB.Model(new({{.Name}})).Updates({{.ShortName}}).Error
+	return connectionDB.Model({{.ShortName}}).Where("id",{{.ShortName}}.Id).Updates({{.ShortName}}).Error
 }
 
 func ({{.ShortName}} *{{.Name}}) get() error {
@@ -17,9 +17,13 @@ func ({{.ShortName}} *{{.Name}}) get() error {
 }
 
 func ({{.ShortName}} *{{.Name}}) gets(limit, page int) (interface{}, int64) {
-	{{.ShortName}}s, count := []{{.Name}}{}, int64(0)
-	connectionDB.Where("").Find(&{{.ShortName}}s)
-	connectionDB.Where("").Count(&count)
+	{{.ShortName}}s,count := []{{.Name}}{}, int64(0)
+	if limit != 0 && page != 0 {
+	        connectionDB.Model({{.ShortName}}).Where({{.ShortName}}).Limit(limit).Offset((page - 1) * limit).Find(&{{.ShortName}}s)
+    	} else {
+    		connectionDB.Model({{.ShortName}}).Where({{.ShortName}}).Find(&{{.ShortName}}s)
+    	}
+	connectionDB.Model({{.ShortName}}).Where({{.ShortName}}).Count(&count)
 	return {{.ShortName}}s, count
 }
 

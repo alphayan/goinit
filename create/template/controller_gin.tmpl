@@ -19,7 +19,7 @@ func add{{.Name}}(e *gin.Engine) {
 }
 func get{{.Name}}(c *gin.Context) {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-	{{.ShortName}} := &{{.Name}}{ID: id}
+	{{.ShortName}} := &{{.Name}}{Id: id}
 	if err := {{.ShortName}}.get(); err != nil {
 		c.JSON(200, NewRespFault("获取{{.LowName}}失败："+err.Error()))
 		return
@@ -47,7 +47,7 @@ func post{{.Name}}(c *gin.Context) {
 }
 func put{{.Name}}(c *gin.Context) {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-	{{.ShortName}} := &{{.Name}}{ID: id}
+	{{.ShortName}} := &{{.Name}}{Id: id}
 	if err := c.Bind({{.ShortName}}); err != nil {
 		c.JSON(200, NewRespBad("参数失败:"+err.Error()))
 		return
@@ -60,7 +60,7 @@ func put{{.Name}}(c *gin.Context) {
 }
 func del{{.Name}}(c *gin.Context) {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-	{{.ShortName}} := &{{.Name}}{ID: id}
+	{{.ShortName}} := &{{.Name}}{Id: id}
 	if err := {{.ShortName}}.delete(); err != nil {
 		c.JSON(200, NewRespFault("删除{{.LowName}}失败:"+err.Error()))
 		return

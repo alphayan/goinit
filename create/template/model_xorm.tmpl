@@ -1,7 +1,7 @@
 package main
 
 type {{.Name}} struct {
-	ID int64 `xorm:"id"`
+	Id int64 `xorm:"id"`
 }
 
 func ({{.ShortName}}  *{{.Name}}) create() error {
@@ -10,12 +10,12 @@ func ({{.ShortName}}  *{{.Name}}) create() error {
 }
 
 func ({{.ShortName}} *{{.Name}}) update() error {
-	_, err := connectionDB.ID({{.ShortName}}.ID).Update({{.ShortName}})
+	_, err := connectionDB.Id({{.ShortName}}.Id).Update({{.ShortName}})
 	return err
 }
 
 func ({{.ShortName}} *{{.Name}}) get() error {
-	_, err := connectionDB.ID({{.ShortName}}.ID).Get({{.ShortName}})
+	_, err := connectionDB.Id({{.ShortName}}.Id).Get({{.ShortName}})
 	return err
 }
 
@@ -27,6 +27,6 @@ func ({{.ShortName}} *{{.Name}}) gets(limit, page int) (interface{}, int64) {
 }
 
 func ({{.ShortName}} *{{.Name}}) delete() error {
-	_, err := connectionDB.ID({{.ShortName}}.ID).Delete({{.ShortName}})
+	_, err := connectionDB.Id({{.ShortName}}.Id).Delete({{.ShortName}})
 	return err
 }
