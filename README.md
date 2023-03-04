@@ -1,6 +1,9 @@
 # goinit    
 goinit  create  a  single package go project  in  `$GOPATH/src/ or use go mod`   
 
+## 2023-03-04 update
+update to go1.20.1
+
 ## 2021-03-03 update
 update to go1.16
 
